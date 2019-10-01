@@ -1,5 +1,38 @@
 apply plugin: 'com.android.application'
 
+ext.majorVersion = 1
+ext.minorVersion = 0
+ext.patchVersion = 0
+ext.minSdkVersion = 23
+
+def generateVersionCode = { ->
+    try {
+        def code = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'tag', '--list'
+            standardOutput = code
+        }
+        return code.toString().split("\n").size()
+    }
+    catch (ignored) {
+        return -1;
+    }
+}
+
+def generateVersionName = { ->
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'describe', '--tags', '--dirty'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim()
+    }
+    catch (ignored) {
+        return null;
+    }
+}
+
 android {
     signingConfigs {
         debug {
@@ -13,10 +46,10 @@ android {
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.PhoneInfo.lab1"
-        minSdkVersion 21
-        targetSdkVersion 26
-        versionCode 1
-        versionName "1.0.0"
+        minSdkVersion project.ext.minSdkVersion
+        targetSdkVersion 29
+        versionCode generateVersionCode()
+        versionName generateVersionName()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

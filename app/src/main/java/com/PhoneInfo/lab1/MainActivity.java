@@ -27,6 +27,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textView = findViewById(R.id.textView);
         dialog = new PermissionDialog();
         button.setOnClickListener(this);
+        if (savedInstanceState != null) {
+            device_unique_id = savedInstanceState.getString("id");
+            textView.setText(BuildConfig.VERSION_NAME + "\n" + device_unique_id);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle bundle)
+    {
+        super.onSaveInstanceState(bundle);
+        bundle.putString("id", device_unique_id);
     }
 
     @Override
