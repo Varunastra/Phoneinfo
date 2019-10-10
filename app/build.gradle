@@ -23,10 +23,16 @@ def generateVersionName = { ->
     try {
         def stdout = new ByteArrayOutputStream()
         exec {
-            commandLine 'git', 'describe', '--tags', '--dirty'
+            commandLine 'git', 'describe', '--tags'
             standardOutput = stdout
         }
-        return stdout.toString().trim()
+        def majorMinor = stdout.toString().trim()
+        def patch = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-list', majorMinor
+            standardOutput = stdout
+        }
+        return majorMinor + "." + patch.toString().split("\n").size()
     }
     catch (ignored) {
         return null;
